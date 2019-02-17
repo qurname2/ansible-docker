@@ -1,3 +1,4 @@
-Role Name
+Ansible-playbook for installation docker on host
 =========
-Ansible-playbook
+See the detailed description of the role
+------------

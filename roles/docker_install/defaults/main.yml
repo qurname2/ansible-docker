@@ -6,7 +6,7 @@ docker_image_name: "weather"
 docker_image_tag: "0.1"
 log_driver: "syslog"
 city_name: "Moscow"
-api_key: "56e0e227deefc97aa2a8e0ad8b2db049"
+api_key: "input here you api_key"
 
 docker_mirror:
   main:
