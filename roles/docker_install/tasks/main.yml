@@ -1,0 +1,73 @@
+---
+
+- name: add repository key
+  apt_key:
+    url: "{{ docker_mirror['main']['key_url'] }}"
+    state: present
+  tags:
+    - docker
+    - docker_repository_key
+
+- name: add repository
+  apt_repository:
+    repo: "{{ docker_mirror['main']['deb'] }}"
+    state: present
+  tags:
+    - docker
+    - docker_repository
+
+- name: install docker
+  apt:
+    name: "{{ docker_package }}={{ docker_version }}"
+    state: present
+  tags:
+    - docker
+    - docker_install
+
+- name: change logging driver to syslog
+  template: 
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+  notify: reload docker
+
+- name: install docker python package
+  apt:
+    name: python3-docker,python-docker
+    state: latest
+  tags:
+    - docker
+    - docker_install_python
+
+- name: check if docker install
+  shell: dpkg -l | grep docker.io
+  register: is_installed
+  failed_when: no
+  tags:
+    - docker
+    - check_docker_install
+
+- name: copy need file to host
+  copy: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: 'Dockerfile.weather', dest: '/tmp/Dockerfile' }
+    - { src: 'weather.py', dest: '/tmp/weather.py' }
+    - { src: 'requirements.txt', dest: '/tmp/requirements.txt'}
+  tags:
+    - docker
+    - copy_file_to_host
+
+- name: create docker image from Dockerfile
+  docker_image:
+    name: "{{ docker_image_name }}"
+    tag: "{{ docker_image_tag }}"
+    path: /tmp
+    state: present
+
+- name: create docker container from image
+  docker_container:
+    name: test_container
+    image: "{{ docker_image_name }}:{{ docker_image_tag }}"
+    state: started
+    env:
+      CITY_NAME: "{{ city_name }}"
+      OPENWEATHER_API_KEY: "{{ api_key }}"

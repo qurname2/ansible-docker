@@ -1,0 +1,4 @@
+---
+# handlers file for install_docker
+- name: reload docker
+  systemd: name=docker state=reloaded

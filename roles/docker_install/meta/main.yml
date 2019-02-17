@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Ivan Bakursky
+  description: Istallation of Docker.io on host and change default logger_driver to syslog
+  company: My_Company
+  license: license GPLv2
+  min_ansible_version: 2.4
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+dependencies: []
